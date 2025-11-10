@@ -1,0 +1,80 @@
+/* shop.css – Royal Blue + Black + White, Light-Only */
+:root {
+  --royal: #4169E1;
+  --royal-gradient: linear-gradient(135deg, #4169E1, #6495ED);
+  --black: #000000;
+  --white: #ffffff;
+}
+
+/* Hero */
+.shop-hero {
+  background: linear-gradient(135deg, #f0f4ff, #d0e0ff);
+  padding-top: 90px;
+}
+.search-bar {
+  max-width: 500px;
+}
+.search-bar .form-control {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(65, 105, 225, 0.3);
+  backdrop-filter: blur(8px);
+}
+.search-bar .form-control:focus {
+  border-color: var(--royal);
+  box-shadow: 0 0 0 0.2rem rgba(65, 105, 225, 0.25);
+}
+
+/* Filters */
+.filter-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(65, 105, 225, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(65, 105, 225, 0.1);
+}
+.form-check-input:checked {
+  background-color: var(--royal);
+  border-color: var(--royal);
+}
+
+/* Product Card */
+.product-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(65, 105, 225, 0.1);
+  transition: all 0.3s ease;
+}
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(65, 105, 225, 0.2);
+}
+.product-img-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.product-img-wrapper img {
+  transition: transform 0.4s ease;
+}
+.product-card:hover .product-img-wrapper img {
+  transform: scale(1.1);
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+/* Buttons */
+.btn-outline-royal {
+  border: 1.5px solid var(--royal);
+  color: var(--royal);
+}
+.btn-outline-royal:hover {
+  background: var(--royal);
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .shop-hero { padding-top: 70px; }
+  .search-bar { max-width: 100%; }
+}

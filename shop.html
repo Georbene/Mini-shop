@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop - Trendz</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+  <!-- Custom -->
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="shop.css"/>
+</head>
+<body>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="addToast" class="toast align-items-center text-bg-success border-0" role="alert">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="fas fa-check-circle me-2"></i>
+          <span id="toastMsg">Product added to cart!</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold fs-3" href="index.html">Trendz</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-3">
+          <li class="nav-item"><a class="nav-link fw-500" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link fw-500 active" href="shop.html">Shop</a></li>
+          <li class="nav-item position-relative">
+            <a class="nav-link fw-500" href="#" id="cartBtn">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="badge bg-royal text-white rounded-pill position-absolute top-0 start-100 translate-middle" id="cartCount">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-500 position-relative" href="#" id="ordersBtn">
+              <i class="fas fa-history"></i>
+              <span class="badge bg-warning text-dark rounded-pill position-absolute top-0 start-100 translate-middle d-none" id="pendingBadge">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle fw-500 d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+              <img id="userPhoto" src="" alt="User" class="rounded-circle" width="32" height="32">
+              <span id="userName">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="dashboard.html">Dashboard</a></li>
+              <li><a class="dropdown-item" href="#" id="logoutBtn">Log Out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CART MODAL -->
+  <div class="modal fade" id="cartModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Your Cart</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="cartItems"></div>
+          <hr>
+          <div class="d-flex justify-content-between fw-bold">
+            <span>Total:</span>
+            <span id="cartTotal">$0.00</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+          <button type="button" class="btn btn-royal" id="checkoutBtn">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal fade" id="checkoutModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Checkout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="checkoutForm">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="checkoutName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="checkoutEmail" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              <textarea class="form-control" id="checkoutAddress" rows="2" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-control" id="checkoutPhone" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" form="checkoutForm" class="btn btn-royal" id="placeOrderBtn">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS HISTORY MODAL -->
+  <div class="modal fade" id="ordersModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Your Orders</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="ordersList">
+            <p class="text-muted text-center">No orders yet.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP HERO -->
+  <section class="shop-hero">
+    <div class="container py-5 text-center">
+      <h1 class="display-4 fw-bold mb-3">Shop Everything</h1>
+      <p class="lead text-muted mb-4">Discover millions of products from top sellers.</p>
+      <div class="search-bar mx-auto">
+        <input type="text" class="form-control form-control-lg rounded-pill" placeholder="Search products..." id="searchInput">
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS & PRODUCTS -->
+  <section class="shop-content py-5">
+    <div class="container">
+      <div class="row">
+        <!-- Filters -->
+        <div class="col-lg-3" data-aos="fade-right">
+          <div class="filter-card p-4">
+            <h5 class="fw-bold mb-4">Filters</h5>
+            <div class="mb-4">
+              <h6 class="fw-600">Category</h6>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="electronics" id="cat-electronics">
+                <label class="form-check-label" for="cat-electronics">Electronics</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="fashion" id="cat-fashion">
+                <label class="form-check-label" for="cat-fashion">Fashion</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="home" id="cat-home">
+                <span class="form-check-label" for="cat-home">Home & Garden</span>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="digital" id="cat-digital">
+                <label class="form-check-label" for="cat-digital">Digital</label>
+              </div>
+            </div>
+            <button id="clearFilters" class="btn btn-outline-royal w-100 rounded-pill">Clear Filters</button>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="col-lg-9" data-aos="fade-left">
+          <div class="row g-4" id="productGrid"></div>
+          <div id="noResults" class="text-center py-5 d-none">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No products found. Try adjusting your filters.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { firebaseConfig } from './firebases.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // === USER SETUP ===
+    let currentUser = JSON.parse(localStorage.getItem('trendz_user'));
+    if (!currentUser) window.location.href = 'login.html';
+
+    if (!currentUser.uid) {
+      currentUser.uid = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('trendz_user', JSON.stringify(currentUser));
+    }
+
+    document.getElementById('userPhoto').src = currentUser.photoURL || 'https://via.placeholder.com/32?text=U';
+    document.getElementById('userName').textContent = currentUser.displayName || 'Guest';
+
+    // === DATA ===
+    let allProducts = JSON.parse(localStorage.getItem('shopProducts')) || [];
+    let cart = JSON.parse(localStorage.getItem(`cart_${currentUser.uid}`) || '[]');
+    let userOrders = JSON.parse(localStorage.getItem(`orders_${currentUser.uid}`) || '[]');
+
+    const grid = document.getElementById('productGrid');
+    const cartCount = document.getElementById('cartCount');
+    const pendingBadge = document.getElementById('pendingBadge');
+    const ordersModal = new bootstrap.Modal(document.getElementById('ordersModal'));
+
+    // === TOAST ===
+    function showToast(msg) {
+      document.getElementById('toastMsg').textContent = msg;
+      new bootstrap.Toast(document.getElementById('addToast')).show();
+    }
+
+    // === RENDER PRODUCTS ===
+    function renderProducts(filtered = allProducts) {
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        document.getElementById('noResults').classList.remove('d-none');
+        return;
+      }
+      document.getElementById('noResults').classList.add('d-none');
+      grid.innerHTML = filtered.map(p => {
+        const cartItem = cart.find(c => c.id == p.id);
+        const qty = cartItem ? cartItem.qty : 0;
+        return `
+          <div class="col-md-6 col-xl-4">
+            <div class="product-card">
+              <div class="product-img-wrapper">
+                <img src="${p.image}" alt="${p.name}" class="img-fluid">
+              </div>
+              <div class="p-3">
+                <h6 class="fw-bold">${p.name}</h6>
+                <p class="text-muted small">${p.description}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="h5 fw-bold text-royal">$${p.price.toFixed(2)}</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-royal qty-btn" data-id="${p.id}" data-action="decrease" ${qty === 0 ? 'disabled' : ''}>-</button>
+                    <span class="fw-bold">${qty}</span>
+                    <button class="btn btn-sm btn-outline-royal qty-btn" data-id="${p.id}" data-action="increase">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // === RENDER CART ===
+    function renderCart() {
+      const items = document.getElementById('cartItems');
+      const totalEl = document.getElementById('cartTotal');
+      if (cart.length === 0) {
+        items.innerHTML = '<p class="text-muted text-center">Your cart is empty.</p>';
+        totalEl.textContent = '$0.00';
+        return;
+      }
+
+      let total = 0;
+      items.innerHTML = cart.map(item => {
+        const p = allProducts.find(x => x.id == item.id);
+        if (!p) return '';
+        total += p.price * item.qty;
+        return `
+          <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+            <div class="d-flex align-items-center gap-3">
+              <img src="${p.image}" width="50" class="rounded">
+              <div>
+                <h6 class="mb-0">${p.name}</h6>
+                <small class="text-muted">$${p.price.toFixed(2)} × ${item.qty}</small>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger remove-from-cart" data-id="${p.id}">×</button>
+          </div>
+        `;
+      }).join('');
+      totalEl.textContent = '$' + total.toFixed(2);
+    }
+
+    // === RENDER ORDERS HISTORY ===
+    function renderOrders() {
+      const list = document.getElementById('ordersList');
+      if (userOrders.length === 0) {
+        list.innerHTML = '<p class="text-muted text-center">No orders yet.</p>';
+        pendingBadge.classList.add('d-none');
+        return;
+      }
+
+      const pendingCount = userOrders.filter(o => o.status === 'pending').length;
+      pendingBadge.textContent = pendingCount;
+      pendingBadge.classList.toggle('d-none', pendingCount === 0);
+
+      list.innerHTML = userOrders.map(o => `
+        <div class="border rounded p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="fw-bold">Order #${o.id}</h6>
+              <p class="mb-1"><strong>Total:</strong> $${o.total} | <strong>Items:</strong> ${o.items}</p>
+              <p class="mb-1"><strong>Date:</strong> ${o.date} <strong>Time:</strong> ${o.time}</p>
+            </div>
+            <span class="badge bg-${o.status === 'approved' ? 'success' : 'warning'} fs-6">${o.status.toUpperCase()}</span>
+          </div>
+          <hr class="my-2">
+          <small class="text-muted">${o.products.map(p => `${p.name} ×${p.qty}`).join(', ')}</small>
+        </div>
+      `).join('');
+    }
+
+    // === UPDATE CART ===
+    function updateCart(id, change) {
+      const item = cart.find(c => c.id == id);
+      if (item) {
+        item.qty = Math.max(1, item.qty + change);
+        if (item.qty === 1) cart = cart.filter(c => c.id != id);
+      } else if (change > 0) {
+        cart.push({ id, qty: 1 });
+      }
+      localStorage.setItem(`cart_${currentUser.uid}`, JSON.stringify(cart));
+      cartCount.textContent = cart.reduce((sum, c) => sum + c.qty, 0);
+      renderProducts();
+      renderCart();
+    }
+
+    // === EVENT LISTENERS ===
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.qty-btn');
+      if (btn) {
+        const id = btn.dataset.id;
+        const action = btn.dataset.action;
+        updateCart(id, action === 'increase' ? 1 : -1);
+      }
+
+      if (e.target.closest('.remove-from-cart')) {
+        const id = e.target.closest('.remove-from-cart').dataset.id;
+        cart = cart.filter(c => c.id != id);
+        localStorage.setItem(`cart_${currentUser.uid}`, JSON.stringify(cart));
+        cartCount.textContent = cart.reduce((sum, c) => sum + c.qty, 0);
+        renderCart();
+        renderProducts();
+      }
+    });
+
+    document.getElementById('cartBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      renderCart();
+      new bootstrap.Modal(document.getElementById('cartModal')).show();
+    });
+
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      new bootstrap.Modal(document.getElementById('checkoutModal')).show();
+    });
+
+    document.getElementById('placeOrderBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('checkoutName').value.trim();
+      const email = document.getElementById('checkoutEmail').value.trim();
+      const address = document.getElementById('checkoutAddress').value.trim();
+      const phone = document.getElementById('checkoutPhone').value.trim();
+
+      if (!name || !email || !address || !phone) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      const total = cart.reduce((sum, c) => sum + (allProducts.find(p => p.id == c.id)?.price || 0) * c.qty, 0).toFixed(2);
+      const order = {
+        id: Date.now(),
+        userId: currentUser.uid,
+        userName: currentUser.displayName || name,
+        userEmail: email,
+        items: cart.reduce((sum, c) => sum + c.qty, 0),
+        total,
+        status: 'pending',
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        address,
+        phone,
+        products: cart.map(c => {
+          const p = allProducts.find(x => x.id == c.id);
+          return { id: p.id, name: p.name, price: p.price, qty: c.qty };
+        })
+      };
+
+      let adminOrders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
+      adminOrders.push(order);
+      localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
+
+      userOrders.push(order);
+      localStorage.setItem(`orders_${currentUser.uid}`, JSON.stringify(userOrders));
+
+      localStorage.setItem(`cart_${currentUser.uid}`, '[]');
+      cart = [];
+      cartCount.textContent = '0';
+      bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
+      renderOrders();
+      document.getElementById('checkoutForm').reset();
+    });
+
+    // === ORDERS BUTTON ===
+    document.getElementById('ordersBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      renderOrders();
+      new bootstrap.Modal(document.getElementById('ordersModal')).show();
+    });
+
+    // === FILTERS ===
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.querySelectorAll('.category-filter').forEach(cb => cb.addEventListener('change', applyFilters));
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.getElementById('searchInput').value = '';
+      document.querySelectorAll('.category-filter').forEach(cb => cb.checked = false);
+      applyFilters();
+    });
+
+    function applyFilters() {
+      const term = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cats = Array.from(document.querySelectorAll('.category-filter')).filter(cb => cb.checked).map(cb => cb.value);
+      let filtered = allProducts;
+
+      if (term) {
+        filtered = filtered.filter(p => 
+          p.name.toLowerCase().includes(term) || 
+          p.description.toLowerCase().includes(term)
+        );
+      }
+      if (cats.length > 0) {
+        filtered = filtered.filter(p => cats.includes(p.category));
+      }
+      renderProducts(filtered);
+    }
+
+    // === INIT ===
+    cartCount.textContent = cart.reduce((sum, c) => sum + c.qty, 0);
+    renderProducts();
+    renderOrders();
+    AOS.init({ once: true, duration: 800 });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      localStorage.removeItem('trendz_user');
+      window.location.href = 'login.html';
+    });
+
+    onAuthStateChanged(auth, (u) => { if (!u) window.location.href = 'login.html'; });
+  </script>
+</body>
+</html>
